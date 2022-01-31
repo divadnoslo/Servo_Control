@@ -11,27 +11,44 @@ class LP(ServoDriver):
         self.AZ = AZ # Azimuth is Channel Zero
         self.EL = EL # Elevation is Channel One
         self.delay = delay # seconds
-        
-    # Center the LP Orientation
-    def centerLP(self):
-        self.center(self.AZ)
-        time.sleep(self.delay)
-        self.center(self.EL)
-        time.sleep(self.delay)
+        self.az_offset = 0
+        self.el_offset = 5
+        self.az = 0
+        self.el = 0
         
     # Move the LP to a new Orientation
     def setLP(self, az, el):
-        self.setAngle(self.AZ, az)
+        self.az = az
+        self.setAngle(self.AZ, self.az - self.az_offset)
         time.sleep(self.delay)
-        self.setAngle(self.EL, el)
+        self.el = el
+        self.setAngle(self.EL, self.el - self.el_offset)
         time.sleep(self.delay)
+        
+    # Center the LP Orientation
+    def centerLP(self):
+        self.az = 0
+        self.el = 0
+        self.setLP(self.az, self.el)
+        
+    # Calibrate LP
+    def calLP(self, new_az_offset, new_el_offset):
+        print(f'Current Offset for Azimuth and Elevation \n    Az: {self.az_offset} deg \n    El: {self.el_offset} deg \n\n')
+        self.az_offset = new_az_offset
+        self.el_offset = new_el_offset
+        print(f'New Offset \n    Az: {self.az_offset} deg \n    El {self.el_offset} deg \n\n')
+        self.centerLP()
         
     # Draw a Circle
     def drawCircle(self, theta, delta):
-        self.setLP(0, theta)
-        time.sleep(1)
+        start_az = self.az
+        start_el = self.el
+        self.setLP(start_az, start_el + theta)
+        time.sleep(self.delay)
         for k in np.arange(0, 2*np.pi, delta * np.pi/180):
-            self.setLP(theta * np.sin(k), theta * np.cos(k))
+            self.az = start_az + (theta * np.sin(k))
+            self.el = start_el + (theta * np.cos(k))
+            self.setLP(self.az, self.el)
         time.sleep(1)
         self.centerLP()
         

@@ -13,8 +13,21 @@ time.sleep(1)
 # time.sleep(3)
 # lp.centerLP()
 
-# # Draw Circle
-# lp.drawCircle(60, 10)
+# Calibrate LP
+lp.calLP(0, -2)
 
-# Draw Square
-lp.drawSquare(10, 1)  # I'll come back to this later
+# Set LP
+time.sleep(1)
+lp.setLP(-15, 0)
+time.sleep(1)
+lp.setLP(15, 0)
+time.sleep(1)
+
+#Center LP
+lp.centerLP()
+
+# # Draw Circle
+# lp.drawCircle(10, 10)
+
+# # Draw Square
+# lp.drawSquare(10, 1)  # I'll come back to this later
